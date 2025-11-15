@@ -1,55 +1,98 @@
-# PSGC to SQL Generator and Data Exporter for Philippine Administrative Divisions
+# 🇵🇭 Philippine Standard Geographic Code (PSGC) Data Tools
 
-This repository provides Python and PHP scripts to generate SQL INSERT statements for Philippine administrative divisions from the Philippine Standard Geographic Code (PSGC) data. It also includes scripts to extract data from the generated SQL database and export it in various formats.
+**PSGC-to-SQL/CSV/JSON Generator & Exporter for Philippine Administrative Divisions (Python & PHP)**
 
-Easily create and manage SQL databases with lists of provinces, cities, municipalities, and barangays in the Philippines.
+This repository provides scripts to process the official **Philippine Standard Geographic Code (PSGC)** data and generate ready-to-use database assets for all administrative divisions (Regions, Provinces, Cities/Municipalities, and Barangays).
 
-**Keywords:** PSGC, Philippines, administrative divisions, provinces, cities, municipalities, barangays, SQL, INSERT statements, database, Python, PHP, CSV, JSON, XML
+It supports generating **SQL INSERT statements** for database population and directly exporting the structured data to **CSV, JSON, and XML** formats.
 
-## Scripts
+## ✨ Key Features
 
-*   **`psgc_to_sql.py`:** Python script to generate SQL INSERT statements for provinces, cities, municipalities, and barangays.
-*   **`xlsx_to_csv.py`:** Python script to convert the PSGC Excel (.xlsx) file to CSV format.
-*   **`psgc_to_sql.php`:** PHP script to generate SQL INSERT statements for provinces, cities, municipalities, and barangays.
-*   **`extract_data.py`:** Python script to extract data from the SQL database and export it in SQL, CSV, JSON, and XML formats.
-*   **`extract_data.php`:** PHP script to extract data from the SQL database and export it in SQL, CSV, JSON, and XML formats.
+* **Code Generators:** Scripts written in **Python** and **PHP** to parse the official PSGC Excel file.
 
-## Usage
+* **Multi-Format Export:** Extracts and exports structured geographic data into **SQL, CSV, JSON, and XML** formats.
 
-### Generating the SQL Database
+* **Database Schema:** Includes `create_tables.sql` to quickly set up your database structure.
 
-1.  **Download PSGC Data:**
-    * Download the latest PSGC data in Excel format from the PSA website: [https://psa.gov.ph/classification/psgc](https://psa.gov.ph/classification/psgc)
-    * **OR** use the sample PSGC file provided in this repository (`sample_psgc_data.xlsx`).
-2.  **Convert to CSV (if necessary):** Use `xlsx_to_csv.py` to convert the Excel file to CSV.
-3.  **Generate SQL:**
-    * Run `psgc_to_sql.py` (Python) or `psgc_to_sql.php` (PHP) to generate the SQL INSERT statements.
-4.  **Create Tables:** Use the provided SQL code (`create_tables.sql`) to create the necessary tables in your database.
-5.  **Execute SQL:** Execute the generated SQL INSERT statements in your database management tool (e.g., MySQL Workbench, phpMyAdmin) to populate your database.
+* **Up-to-Date:** Designed to process the latest PSGC data released by the Philippine Statistics Authority (PSA).
 
-### Extracting Data from the Database
+## 🗺️ Understanding the PSGC Hierarchy
 
-1.  **Configure Database Connection:** 
-    * **Important:** Update the `db_config` dictionary in `extract_data.py` (Python) or `$dbConfig` array in `extract_data.php` (PHP) with your actual database credentials.
-2.  **Run the Script:** 
-    * Execute `extract_data.py` (Python) or `extract_data.php` (PHP) to extract data from the specified tables and export it in SQL, CSV, JSON, and XML formats.
+A clear understanding of the PSGC's 10-digit code structure is essential for database design and lookups. The codes define the nested administrative hierarchy:
 
-## Contents
+| **Digits** | **Geographic Level** | **Example Code (for a Barangay)** | **Description** | 
+ | ----- | ----- | ----- | ----- | 
+| **1-2** | **Region** | **04** (CALABARZON) | The first two digits identify the region. | 
+| **3-4** | **Province** | 04.**21** (Batangas) | Digits 3 and 4 identify the province (or HUC/ICC) within the region. | 
+| **5-6** | **City/Municipality** | 0421.**04** (City of Batangas) | Digits 5 and 6 identify the city or municipality within the province. | 
+| **7-10** | **Barangay** | 042104.**001** (Example Barangay Code) | Digits 7 through 10 identify the barangay. | 
 
-*   **`sample_psgc_data.xlsx`:** Sample PSGC data file.
-*   **`create_tables.sql`:** SQL code to create the necessary database tables.
+## 🚀 Usage
 
-## Requirements
+### 1. Generating the SQL Database
 
-*   Python 3.6 or higher
-*   `openpyxl` library (install using `pip install openpyxl`)
-*   `mysql.connector` library (install using `pip install mysql-connector-python`)
-*   PHP 7.0 or higher with PDO extension enabled
+This phase turns the raw PSGC Excel file into SQL data that can be imported into your database.
 
-## Contributing
+| **Script** | **Language** | **Function** | 
+ | ----- | ----- | ----- | 
+| `psgc_to_sql.py` | Python | **Generates the core SQL `INSERT` statements** for all geographic levels (regions, provinces, cities, municipalities, barangays) from the PSGC file. | 
+| `psgc_to_sql.php` | PHP | **Generates the core SQL `INSERT` statements** as an alternative to the Python script. | 
+| `xlsx_to_csv.py` | Python | Utility to convert the PSA's source PSGC Excel file (`.xlsx`) to a simpler CSV format. | 
+| `create_tables.sql` | SQL | Contains the `CREATE TABLE` statements necessary to set up your database schema. | 
 
-Contributions are welcome! Feel free to open issues or pull requests.
+**Steps:**
 
-## License
+1. **Get PSGC Data:** Download the latest PSGC Excel file (`.xlsx`) from the PSA website.
 
-[[MIT License](https://github.com/tildemark/psgc2sql?tab=MIT-1-ov-file)]
+2. **Generate SQL:** Run either `psgc_to_sql.py` (Python) or `psgc_to_sql.php` (PHP).
+
+3. **Setup Database:** Execute `create_tables.sql` to prepare your tables.
+
+4. **Populate:** Import and execute the generated SQL `INSERT` statements.
+
+### 2. Extracting Data from the Database
+
+Once your database is populated, you can extract the data into other interchange formats.
+
+| **Script** | **Language** | **Function** | 
+ | ----- | ----- | ----- | 
+| `extract_data.py` | Python | Connects to your running SQL database, queries the administrative division tables, and exports the results into **SQL, CSV, JSON, and XML** files. | 
+| `extract_data.php` | PHP | Serves the same purpose as the Python script, using PHP to connect to and export data from your database. | 
+
+**Steps:**
+
+1. **Configure:** Update the database credentials (`db_config` in Python or `$dbConfig` in PHP) within the extraction script.
+
+2. **Run:** Execute `extract_data.py` or `extract_data.php` to generate the exported files.
+
+## 💾 Data Dumps & Releases
+
+The PSGC data is updated periodically. To offer maximum utility, we provide **pre-extracted data dumps** in the **Releases** section of this repository.
+
+* **Benefit:** Developers who only need the data can skip running the scripts and download the ready-to-use `.sql`, `.csv`, or `.json` files immediately.
+
+* **Version Control:** Every release is tagged with the date of the source PSGC data (e.g., `v2025-Q1`) to clearly indicate its freshness.
+
+## 🛠️ Future TO-DOs
+
+We are working on these planned improvements to enhance the repository:
+
+* **Automated Release Generation (GitHub Actions):** Implement an automated workflow to periodically run the generation scripts and automatically create a new GitHub Release with fresh data dumps.
+
+* **API/Service Integration:** Explore creating a micro-API endpoint for quick data lookups.
+
+* **SQLite Support:** Add scripts to generate a single, pre-populated SQLite database file for simple application integration.
+
+## 📜 Requirements
+
+* **Python:** Python 3.6 or higher (with `openpyxl` and `mysql.connector` libraries)
+
+* **PHP:** PHP 7.0 or higher (with PDO extension enabled)
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to open issues, suggest features, or submit pull requests.
+
+## ⚖️ License
+
+[MIT License](https://www.google.com/search?q=https://github.com/tildemark/psgc2sql/blob/main/LICENSE)

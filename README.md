@@ -1,6 +1,6 @@
 # 🇵🇭 Philippine Standard Geographic Code (PSGC) Data Tools
 
-**PSGC-to-SQL/CSV/JSON Generator & Exporter for Philippine Administrative Divisions (Python & PHP)**
+**PSGC-to-SQL/CSV/JSON Generator & Exporter for Philippine Administrative Divisions (Python, PHP, & Node.js)**
 
 This repository provides scripts to process the official **Philippine Standard Geographic Code (PSGC)** data and generate ready-to-use database assets for all administrative divisions (Regions, Provinces, Cities/Municipalities, and Barangays).
 
@@ -8,9 +8,11 @@ It supports generating **SQL INSERT statements** for database population and dir
 
 ## ✨ Key Features
 
-* **Code Generators:** Scripts written in **Python** and **PHP** to parse the official PSGC Excel file.
+* **Code Generators:** Scripts written in **Node.js** (primary for API), **Python**, and **PHP** for flexible data processing.
 
 * **Multi-Format Export:** Extracts and exports structured geographic data into **SQL, CSV, JSON, and XML** formats.
+
+* **Static API Ready:** **Node.js** scripts specifically designed to generate optimized JSON files for static hosting, making it the **recommended path for GitHub Actions**.
 
 * **Database Schema:** Includes `create_tables.sql` to quickly set up your database structure.
 
@@ -29,7 +31,7 @@ A clear understanding of the PSGC's 10-digit code structure is essential for dat
 
 ## 🚀 Usage
 
-### 1. Generating the SQL Database
+### 1. Generating the SQL Database (Python or PHP)
 
 This phase turns the raw PSGC Excel file into SQL data that can be imported into your database.
 
@@ -37,7 +39,7 @@ This phase turns the raw PSGC Excel file into SQL data that can be imported into
  | ----- | ----- | ----- | 
 | `psgc_to_sql.py` | Python | **Generates the core SQL `INSERT` statements** for all geographic levels (regions, provinces, cities, municipalities, barangays) from the PSGC file. | 
 | `psgc_to_sql.php` | PHP | **Generates the core SQL `INSERT` statements** as an alternative to the Python script. | 
-| `xlsx_to_csv.py` | Python | Utility to convert the PSA's source PSGC Excel file (`.xlsx`) to a simpler CSV format. | 
+| `xlsx_to_csv.py` | Python | Utility to convert the PSA's source PSGC Excel file (`.xlsx`) to a simpler CSV format (`psgc.csv`). **Required input for the Node.js script.** | 
 | `create_tables.sql` | SQL | Contains the `CREATE TABLE` statements necessary to set up your database schema. | 
 
 **Steps:**
@@ -50,20 +52,20 @@ This phase turns the raw PSGC Excel file into SQL data that can be imported into
 
 4. **Populate:** Import and execute the generated SQL `INSERT` statements.
 
-### 2. Extracting Data from the Database
+### 2. Extracting Data and Generating Static API Files (Node.js Focus)
 
-Once your database is populated, you can extract the data into other interchange formats.
+If your goal is to generate the Static API for GitHub Pages, **Node.js is the preferred environment.**
 
 | **Script** | **Language** | **Function** | 
  | ----- | ----- | ----- | 
+| `psgc_to_api_json.js` | Node.js | **PRIMARY TOOL:** Reads the intermediary `psgc.csv` file and generates highly optimized JSON files for a **Static API** directly, making it ideal for GitHub Actions. |
 | `extract_data.py` | Python | Connects to your running SQL database, queries the administrative division tables, and exports the results into **SQL, CSV, JSON, and XML** files. | 
 | `extract_data.php` | PHP | Serves the same purpose as the Python script, using PHP to connect to and export data from your database. | 
 
-**Steps:**
+**Steps for Static API (Node.js):**
 
-1. **Configure:** Update the database credentials (`db_config` in Python or `$dbConfig` in PHP) within the extraction script.
-
-2. **Run:** Execute `extract_data.py` or `extract_data.php` to generate the exported files.
+1. **Prerequisite:** Run `xlsx_to_csv.py` once to create `psgc.csv`.
+2. **Run Generator:** Execute `npm install && npm run generate`.
 
 ## 💾 Data Dumps & Releases
 
@@ -77,21 +79,21 @@ The PSGC data is updated periodically. To offer maximum utility, we provide **pr
 
 We are working on these planned improvements to enhance the repository:
 
-* **Static API Data Generation:** Update extraction scripts to generate highly optimized, organized **JSON files** (e.g., `regions.json`, `04-provinces.json`) for serving as a Static API via GitHub Pages or a CDN.
-* **Automated Release Generation (GitHub Actions):** Implement an automated workflow to periodically run the data generation/extraction scripts, commit the new static JSON files, and automatically create a new GitHub Release with fresh data dumps.
+* **Node.js Static API Generation:** Complete the logic in `psgc_to_api_json.js` to fully process all geographic levels and place the final JSON files into the `/docs/api/` directory, enabling Static API hosting.
+* **Automated Release Generation (GitHub Actions):** Implement an automated workflow (leveraging Node.js) to periodically run the data generation/extraction scripts, commit the new static JSON files, and automatically create a new GitHub Release with fresh data dumps.
+* **Documentation Hosting:** Generate and host API documentation using GitHub Pages (e.g., Jekyll or a custom HTML template).
 * **SQLite Support:** Add scripts to generate a single, pre-populated SQLite database file for simple application integration.
 * **Dynamic API Exploration (Future):** Explore creating a separate, truly dynamic API endpoint (using Flask/Python or similar) for complex querying and filtering, separate from the static files.
-* **Documentation Hosting:** Generate and host API documentation using GitHub Pages (e.g., Jekyll or a custom HTML template).
 
 ## 📜 Requirements
 
 * **Python:** Python 3.6 or higher (with `openpyxl` and `mysql.connector` libraries)
-
 * **PHP:** PHP 7.0 or higher (with PDO extension enabled)
+* **Node.js:** Node.js 18 or higher (with `csv-parser` dependency, used for Static API generation).
 
 ## 🤝 Contributing
 
-Contributions are welcome! Feel free to open issues, suggest features, or submit pull requests.
+Contributions are welcome! Feel yourself to open issues, suggest features, or submit pull requests.
 
 ## ⚖️ License
 

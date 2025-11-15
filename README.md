@@ -77,11 +77,11 @@ The PSGC data is updated periodically. To offer maximum utility, we provide **pr
 
 We are working on these planned improvements to enhance the repository:
 
-* **Automated Release Generation (GitHub Actions):** Implement an automated workflow to periodically run the generation scripts and automatically create a new GitHub Release with fresh data dumps.
-
-* **API/Service Integration:** Explore creating a micro-API endpoint for quick data lookups.
-
+* **Static API Data Generation:** Update extraction scripts to generate highly optimized, organized **JSON files** (e.g., `regions.json`, `04-provinces.json`) for serving as a Static API via GitHub Pages or a CDN.
+* **Automated Release Generation (GitHub Actions):** Implement an automated workflow to periodically run the data generation/extraction scripts, commit the new static JSON files, and automatically create a new GitHub Release with fresh data dumps.
 * **SQLite Support:** Add scripts to generate a single, pre-populated SQLite database file for simple application integration.
+* **Dynamic API Exploration (Future):** Explore creating a separate, truly dynamic API endpoint (using Flask/Python or similar) for complex querying and filtering, separate from the static files.
+* **Documentation Hosting:** Generate and host API documentation using GitHub Pages (e.g., Jekyll or a custom HTML template).
 
 ## 📜 Requirements
 

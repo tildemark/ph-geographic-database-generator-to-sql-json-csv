@@ -1,0 +1,41 @@
+name: 🏭 Auto-Generate Assets
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'psgc_data.xlsx' # Triggers ONLY when the Excel file changes on main
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: pip install pandas openpyxl
+
+      - name: 1. Generate CSV
+        run: python xlsx_to_csv.py
+
+      - name: 2. Generate SQL
+        run: python psgc_to_sql.py > dump.sql
+
+      # - name: 3. Generate JSON API (Uncomment when ready)
+      #   run: node psgc_to_api_json.js
+
+      - name: Commit New Database Assets
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "🤖 Factory: Regenerated SQL/CSV from new data"
+          file_pattern: 'psgc.csv dump.sql api/**'

@@ -1,0 +1,31 @@
+name: 🛡️ Validate Incoming Data
+
+on:
+  pull_request:
+    paths:
+      - '**.xlsx' # Only runs if someone touches an Excel file
+      - 'scripts/**'
+
+jobs:
+  validate-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: pip install pandas openpyxl
+
+      - name: 🔍 Run Validation
+        run: python scripts/validate_excel.py
+
+      - name: 🧪 Test Generation (Dry Run)
+        run: |
+          # We run this just to make sure it doesn't crash
+          python psgc_to_sql.py > /dev/null
+          echo "✅ Generation scripts ran successfully (Output discarded)"

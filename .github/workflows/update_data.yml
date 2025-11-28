@@ -1,40 +1,50 @@
-name: Weekly Data Update
+name: Auto-Update PSGC Data
 
 on:
   schedule:
-    - cron: '0 0 * * 0' # Runs every Sunday at midnight
-  workflow_dispatch: # Allows you to run it manually from the "Actions" tab
+    # Run every Sunday at midnight (UTC)
+    - cron: '0 0 * * 0'
+  workflow_dispatch: # This allows you to click "Run Now" manually
+
+permissions:
+  contents: write # Required to commit the new file back to the repo
 
 jobs:
-  update-psgc:
+  scrape-and-generate:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write # Important: Allows the bot to commit changes
-
+    
     steps:
-      - name: Checkout Repo
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
-      - name: Install Scraper Dependencies
-        run: pip install requests beautifulsoup4 openpyxl
+      - name: Install Dependencies
+        run: |
+          pip install requests beautifulsoup4 openpyxl
 
-      - name: Download Latest Data
+      - name: 1. Scrape Latest Data
         run: python scripts/download_psgc.py
 
-      - name: Convert to CSV/SQL (Your existing scripts)
-        run: |
-          python xlsx_to_csv.py
-          python psgc_to_sql.py > dump.sql
-          # Add your Node.js generation step here if needed
+      - name: 2. Convert Excel to CSV
+        # Assuming you have xlsx_to_csv.py in your root based on README
+        run: python xlsx_to_csv.py
 
-      - name: Commit and Push if Changed
+      - name: 3. Generate SQL Dump
+        run: python psgc_to_sql.py > dump.sql
+
+      # Optional: Add your Node.js steps here if you want to update the API JSONs too
+      # - name: Generate JSON API
+      #   run: |
+      #     npm install
+      #     node psgc_to_api_json.js
+
+      - name: Commit and Push Changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "🤖 Auto-update: New PSGC data detected"
+          commit_message: "🤖 Auto-update: Latest PSGC data fetched"
+          file_pattern: 'psgc_data.xlsx psgc.csv dump.sql'
           branch: main
-          file_pattern: 'psgc_data.xlsx psgc.csv dump.sql api/*'

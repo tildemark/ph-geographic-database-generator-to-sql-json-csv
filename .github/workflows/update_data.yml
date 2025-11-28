@@ -24,7 +24,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install requests beautifulsoup4 openpyxl
+          pip install requests beautifulsoup4 openpyxl cloudscraper
 
       - name: 1. Scrape Latest Data
         run: python scripts/download_psgc.py

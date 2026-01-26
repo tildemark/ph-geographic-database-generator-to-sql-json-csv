@@ -1,100 +1,123 @@
-# 🇵🇭 Philippine Standard Geographic Code (PSGC) Data Tools
+# Open PH Geographic Data Platform (v2.0.0)
 
-**PSGC-to-SQL/CSV/JSON Generator & Exporter for Philippine Administrative Divisions (Python, PHP, & Node.js)**
+![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Status](https://img.shields.io/badge/status-active-success.svg)
 
-This repository provides scripts to process the official **Philippine Standard Geographic Code (PSGC)** data and generate ready-to-use database assets for all administrative divisions (Regions, Provinces, Cities/Municipalities, and Barangays).
+**A modern, containerized platform for Philippine Standard Geographic Code (PSGC) data.**
 
-It supports generating **SQL INSERT statements** for database population and directly exporting the structured data to **CSV, JSON, and XML** formats.
+> **Note:** This project is a complete overhaul of the legacy v1.0 scraping scripts. If you are looking for the old PHP/Python crawlers, please switch to the `v1-legacy-crawler` branch.
 
-## ✨ Key Features
+## 🚀 Overview
 
-* **Code Generators:** Scripts written in **Node.js** (primary for API), **Python**, and **PHP** for flexible data processing.
+The **Open PH Geographic Data Platform** provides a reliable, high-performance way to access Philippine geographic data (Regions, Provinces, Cities, Municipalities, Barangays).
 
-* **Multi-Format Export:** Extracts and exports structured geographic data into **SQL, CSV, JSON, and XML** formats.
+Unlike the previous version which relied on fragile web scraping, v2.0.0 uses a **verified ingestion workflow** where official PSGC Excel files are uploaded via a secure Admin Dashboard. This data is then served via:
 
-* **Static API Ready:** **Node.js** scripts specifically designed to generate optimized JSON files for static hosting, making it the **recommended path for GitHub Actions**.
+1.  **Public API:** A high-speed, cached REST API (FastAPI + Redis) for real-time application usage.
+2.  **Static Dumps:** Automatically generated `.sql`, `.json`, and `.csv` files for offline use.
 
-* **Database Schema:** Includes `create_tables.sql` to quickly set up your database structure.
+**Live Demo:** [https://barangays.sanchez.ph](https://barangays.sanchez.ph)
 
-* **Up-to-Date:** Designed to process the latest PSGC data released by the Philippine Statistics Authority (PSA).
+## 🏗 Tech Stack
 
-## 🗺️ Understanding the PSGC Hierarchy
+Built for performance and reliability on OCI Ampere (ARM64) infrastructure.
 
-A clear understanding of the PSGC's 10-digit code structure is essential for database design and lookups. The codes define the nested administrative hierarchy:
+* **Database:** PostgreSQL 16 + PostGIS (Hierarchical integrity & geo-spatial readiness)
+* **Backend:** Python FastAPI (Async, Auto-Documentation)
+* **Caching:** Redis 7 (Rate limiting & response caching)
+* **Frontend:** Next.js 14 (App Router), Tailwind CSS, Shadcn/UI
+* **Infrastructure:** Docker Compose (Orchestration)
 
-| **Digits** | **Geographic Level** | **Example Code (for a Barangay)** | **Description** | 
- | ----- | ----- | ----- | ----- | 
-| **1-2** | **Region** | **04** (CALABARZON) | The first two digits identify the region. | 
-| **3-4** | **Province** | 04.**21** (Batangas) | Digits 3 and 4 identify the province (or HUC/ICC) within the region. | 
-| **5-6** | **City/Municipality** | 0421.**04** (City of Batangas) | Digits 5 and 6 identify the city or municipality within the province. | 
-| **7-10** | **Barangay** | 042104.**001** (Example Barangay Code) | Digits 7 through 10 identify the barangay. | 
+## ✨ Features
 
-## 🚀 Usage
+* **✅ Live Public API:** Query geographic data with sub-millisecond latency.
+* **✅ Verified Data Ingest:** Admin interface to upload official PSGC Excel files, preventing "broken crawler" issues.
+* **✅ Auto-Generation:** Instantly generates static SQL/JSON/CSV dumps upon data update.
+* **✅ Rate Limiting:** Built-in protection against abuse (via Redis).
+* **✅ Interactive Docs:** Full Swagger UI (`/docs`) and Redoc (`/redoc`) support.
+* **✅ Dockerized:** One-command deployment for any server.
 
-### 1. Generating the SQL Database (Python or PHP)
+## 🛠 Installation & Setup
 
-This phase turns the raw PSGC Excel file into SQL data that can be imported into your database.
+### Prerequisites
+* Docker & Docker Compose
 
-| **Script** | **Language** | **Function** | 
- | ----- | ----- | ----- | 
-| `psgc_to_sql.py` | Python | **Generates the core SQL `INSERT` statements** for all geographic levels (regions, provinces, cities, municipalities, barangays) from the PSGC file. | 
-| `psgc_to_sql.php` | PHP | **Generates the core SQL `INSERT` statements** as an alternative to the Python script. | 
-| `xlsx_to_csv.py` | Python | Utility to convert the PSA's source PSGC Excel file (`.xlsx`) to a simpler CSV format (`psgc.csv`). **Required input for the Node.js script.** | 
-| `create_tables.sql` | SQL | Contains the `CREATE TABLE` statements necessary to set up your database schema. | 
+### 1. Clone the Repository
+```bash
+git clone [https://github.com/tildemark/ph-geographic-database-generator-to-sql-json-csv.git](https://github.com/tildemark/ph-geographic-database-generator-to-sql-json-csv.git)
+cd ph-geographic-database-generator-to-sql-json-csv
 
-**Steps:**
+```
 
-1. **Get PSGC Data:** Download the latest PSGC Excel file (`.xlsx`) from the PSA website.
+### 2. Configure Environment
 
-2. **Generate SQL:** Run either `psgc_to_sql.py` (Python) or `psgc_to_sql.php` (PHP).
+Create a `.env` file in the root directory:
 
-3. **Setup Database:** Execute `create_tables.sql` to prepare your tables.
+```env
+# Database Credentials
+POSTGRES_USER=admin
+POSTGRES_PASSWORD=change_me_securely
+POSTGRES_DB=ph_geo_db
 
-4. **Populate:** Import and execute the generated SQL `INSERT` statements.
+# Security
+ADMIN_SECRET=your_secret_upload_key
 
-### 2. Extracting Data and Generating Static API Files (Node.js Focus)
+# Domain Configuration
+NEXT_PUBLIC_API_URL=http://localhost:8000
+ALLOWED_ORIGINS=http://localhost:3000
 
-If your goal is to generate the Static API for GitHub Pages, **Node.js is the preferred environment.**
+```
 
-| **Script** | **Language** | **Function** | 
- | ----- | ----- | ----- | 
-| `psgc_to_api_json.js` | Node.js | **PRIMARY TOOL:** Reads the intermediary `psgc.csv` file and generates highly optimized JSON files for a **Static API** directly, making it ideal for GitHub Actions. |
-| `extract_data.py` | Python | Connects to your running SQL database, queries the administrative division tables, and exports the results into **SQL, CSV, JSON, and XML** files. | 
-| `extract_data.php` | PHP | Serves the same purpose as the Python script, using PHP to connect to and export data from your database. | 
+### 3. Run with Docker
 
-**Steps for Static API (Node.js):**
+```bash
+docker-compose up --build -d
 
-1. **Prerequisite:** Run `xlsx_to_csv.py` once to create `psgc.csv`.
-2. **Run Generator:** Execute `npm install && npm run generate`.
+```
 
-## 💾 Data Dumps & Releases
+* **Frontend:** Accessible at `http://localhost:3000`
+* **API:** Accessible at `http://localhost:8000`
+* **API Docs:** Accessible at `http://localhost:8000/docs`
 
-The PSGC data is updated periodically. To offer maximum utility, we provide **pre-extracted data dumps** in the **Releases** section of this repository.
+## 📖 API Usage
 
-* **Benefit:** Developers who only need the data can skip running the scripts and download the ready-to-use `.sql`, `.csv`, or `.json` files immediately.
+The API is free to use but rate-limited to ensure availability.
 
-* **Version Control:** Every release is tagged with the date of the source PSGC data (e.g., `v2025-Q1`) to clearly indicate its freshness.
+**Base URL:** `https://barangays.sanchez.ph/api`
 
-## 🛠️ Future TO-DOs
+### Endpoints
 
-We are working on these planned improvements to enhance the repository:
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/regions` | List all regions |
+| `GET` | `/regions/{code}/provinces` | Get all provinces in a region |
+| `GET` | `/provinces/{code}/cities` | Get all cities/municipalities in a province |
+| `GET` | `/cities/{code}/barangays` | Get all barangays in a city/municipality |
 
-* **Node.js Static API Generation:** Complete the logic in `psgc_to_api_json.js` to fully process all geographic levels and place the final JSON files into the `/docs/api/` directory, enabling Static API hosting.
-* **Automated Release Generation (GitHub Actions):** Implement an automated workflow (leveraging Node.js) to periodically run the data generation/extraction scripts, commit the new static JSON files, and automatically create a new GitHub Release with fresh data dumps.
-* **Documentation Hosting:** Generate and host API documentation using GitHub Pages (e.g., Jekyll or a custom HTML template).
-* **SQLite Support:** Add scripts to generate a single, pre-populated SQLite database file for simple application integration.
-* **Dynamic API Exploration (Future):** Explore creating a separate, truly dynamic API endpoint (using Flask/Python or similar) for complex querying and filtering, separate from the static files.
+*For full parameter details, visit the [Swagger Documentation](https://www.google.com/search?q=https://barangays.sanchez.ph/docs).*
 
-## 📜 Requirements
+## 🔐 Admin Guide (Data Updates)
 
-* **Python:** Python 3.6 or higher (with `openpyxl` and `mysql.connector` libraries)
-* **PHP:** PHP 7.0 or higher (with PDO extension enabled)
-* **Node.js:** Node.js 18 or higher (with `csv-parser` dependency, used for Static API generation).
+To update the dataset when PSA releases a new PSGC file:
+
+1. Download the latest **PSGC Publication (Excel)** from the [PSA Website](https://www.google.com/search?q=https://psa.gov.ph/classification/psgc).
+2. Navigate to `/admin` on your deployment.
+3. Enter your `ADMIN_SECRET`.
+4. Upload the `.xlsx` file.
+5. **Wait:** The system will upsert the database, flush the Redis cache, and regenerate the static download files automatically.
+
+## 🗺 Roadmap
+
+* [ ] Add GeoJSON boundary data (polygons) for provinces.
+* [ ] Add population data overlay (if available).
+* [ ] GraphQL endpoint support.
 
 ## 🤝 Contributing
 
-Contributions are welcome! Feel yourself to open issues, suggest features, or submit pull requests.
+Contributions are welcome! Please ensure you use `docker-compose` for development to match the production environment.
 
-## ⚖️ License
+## 📄 License
 
-[MIT License](https://www.google.com/search?q=https://github.com/tildemark/psgc2sql/blob/main/LICENSE)
+This project is licensed under the MIT License - see the [LICENSE](https://www.google.com/search?q=LICENSE) file for details.
+

@@ -1,0 +1,24 @@
+# Core API Framework
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6  # Required for Excel file uploads
+
+# Database (PostgreSQL + PostGIS)
+sqlmodel==0.0.14
+asyncpg==0.29.0
+geoalchemy2==0.14.3      # Essential for handling PostGIS data types
+
+# Caching & Rate Limiting
+redis==5.0.1
+fastapi-limiter==0.1.6
+
+# Data Processing (Excel to SQL)
+pandas==2.2.0
+openpyxl==3.1.2          # Required by pandas to read .xlsx files
+numpy==1.26.3
+
+# Utilities
+python-dotenv==1.0.1     # To read .env files
+pydantic==2.5.3
+pydantic-settings==2.1.0
+email-validator==2.1.0.post1

@@ -1,0 +1,13 @@
+# Standard Python
+__pycache__/
+*.py[cod]
+venv/
+.env
+
+# Standard Node
+node_modules/
+.next/
+out/
+
+# OS
+.DS_Store

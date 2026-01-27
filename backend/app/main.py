@@ -39,4 +39,4 @@ async def health_check():
     return {"status": "ok"}
 
 app.include_router(public.router, prefix="/api", tags=["Public"])
-app.include_router(admin.router, prefix="/admin", tags=["Admin"])
+app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])

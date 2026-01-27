@@ -57,7 +57,7 @@ services:
       # Important: Allow the proxy domain
       ALLOWED_ORIGINS: "https://barangays.sanchez.ph,http://localhost:3000"
     volumes:
-      - ./backend:/app
+      # - ./backend:/app  <-- Removed for Production (Use built image)
       - static_exports:/app/static_exports
     networks:
       - geo_net # To talk to DB

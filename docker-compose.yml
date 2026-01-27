@@ -3,7 +3,7 @@ services:
   # Database: PostgreSQL with PostGIS
   # -------------------------------------------------------------------------
   db:
-    image: postgis/postgis:16-3.4-alpine
+    image: postgis/postgis:16-3.4
     container_name: ph_geo_db
     restart: always
     environment:
@@ -48,10 +48,8 @@ services:
     container_name: ph_geo_api
     restart: always
     depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - db
+      - redis
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-secure_password_here}@db:5432/${POSTGRES_DB:-ph_geo_db}
       REDIS_URL: redis://redis:6379

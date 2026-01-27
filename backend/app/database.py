@@ -10,11 +10,15 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     # Fallback or error, but let's assume it's set or construct it
+    from urllib.parse import quote_plus
     POSTGRES_USER = os.getenv("POSTGRES_USER", "postgres")
     POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "secure_password_here")
     POSTGRES_DB = os.getenv("POSTGRES_DB", "ph_geo_db")
     POSTGRES_HOST = os.getenv("POSTGRES_HOST", "db")
-    DATABASE_URL = f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:5432/{POSTGRES_DB}"
+    
+    encoded_user = quote_plus(POSTGRES_USER)
+    encoded_password = quote_plus(POSTGRES_PASSWORD)
+    DATABASE_URL = f"postgresql+asyncpg://{encoded_user}:{encoded_password}@{POSTGRES_HOST}:5432/{POSTGRES_DB}"
 else:
     # Ensure usage of asyncpg driver
     if "postgresql://" in DATABASE_URL:

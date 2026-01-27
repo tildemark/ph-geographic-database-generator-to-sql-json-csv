@@ -49,7 +49,7 @@ export default function Home() {
       <section className="bg-gradient-to-b from-secondary/50 to-background py-20 px-6">
         <div className="container mx-auto max-w-5xl text-center space-y-6">
           <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80 mb-4">
-            {psgcVersion ? `PSGC Data: ${psgcVersion}` : "v2.2.0 Open Source"}
+            {psgcVersion ? `PSGC Data: ${psgcVersion}` : "v2.3.0 Open Source"}
           </div>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tighter">
             Open PH Geographic Data Platform

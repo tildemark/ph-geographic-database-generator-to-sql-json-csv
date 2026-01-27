@@ -5,9 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.2.0] - 2026-01-27
+## [2.3.0] - 2026-01-27
 
 ### Added
+- **Data Versioning & UI Currency**: The platform now automatically extracts the PSGC publication period (e.g., "4Q 2025") from uploaded Excel files and displays it on the landing page.
+- **Metadata API**: New public endpoint `/api/metadata` to expose system-wide data vintage information.
 - **Production URL Snippets**: The Documentation Guide now dynamically displays live API URLs based on environment configuration instead of hardcoded `localhost`.
 - **HUC Geo-Grouping**: Major cities like Cebu City, Cagayan de Oro City, and Davao City are now correctly grouped under their geographic provinces in the dropdown interfaces.
 
@@ -19,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Network Collisions**: Standardized on unique hostnames (`ph_geo_db`, `ph_geo_redis`) to prevent 502 errors caused by container name collisions in shared environments.
 - **Health Check Path**: Moved the health endpoint to `/api/health` to align with Nginx proxy forwarding rules.
 
-## [2.1.0] - 2026-01-27
+## [2.2.0] - 2026-01-27 (Internal Release)
 
 ### Added
 - **XML Support:** Replaced HTML data dumps with XML format for better interoperability.

@@ -14,8 +14,7 @@ interface Snippet {
 }
 
 export function SnippetSwitcher() {
-    const [activeTab, setActiveTab] = useState("curl");
-    const [copied, setCopied] = useState(false);
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
     const snippets: Snippet[] = [
         {
@@ -23,7 +22,7 @@ export function SnippetSwitcher() {
             label: "cURL",
             icon: <Terminal className="h-4 w-4" />,
             lang: "bash",
-            code: `curl -X GET "http://localhost:8000/api/regions/0300000000/provinces" \\
+            code: `curl -X GET "${API_URL}/regions/0300000000/provinces" \\
      -H "Accept: application/json"`,
         },
         {
@@ -33,7 +32,7 @@ export function SnippetSwitcher() {
             lang: "javascript",
             code: `async function fetchProvinces(regionCode) {
   try {
-    const res = await fetch(\`http://localhost:8000/api/regions/\${regionCode}/provinces\`);
+    const res = await fetch(\`${API_URL}/regions/\${regionCode}/provinces\`);
     const data = await res.json();
     console.log(data);
   } catch (error) {
@@ -50,7 +49,7 @@ fetchProvinces("0300000000");`,
             lang: "php",
             code: `<?php
 $region_code = "0300000000";
-$url = "http://localhost:8000/api/regions/$region_code/provinces";
+$url = "${API_URL}/regions/$region_code/provinces";
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $url);
@@ -72,7 +71,7 @@ print_r($data);
             code: `import requests
 
 def get_provinces(region_code):
-    url = f"http://localhost:8000/api/regions/{region_code}/provinces"
+    url = f"${API_URL}/regions/{region_code}/provinces"
     try:
         response = requests.get(url)
         response.raise_for_status()

@@ -39,9 +39,13 @@ export function GeographicSelect() {
     const fetchRegions = async () => {
         setLoading((prev) => ({ ...prev, regions: true }));
         try {
-            const res = await fetch(`${API_URL}/api/regions`);
+            const res = await fetch(`${API_URL}/regions`);
             const data = await res.json();
-            setRegions(data);
+            if (Array.isArray(data)) {
+                setRegions(data);
+            } else {
+                console.error("Expected array from regions API, got:", data);
+            }
         } catch (error) {
             console.error("Failed to fetch regions:", error);
         } finally {
@@ -52,9 +56,13 @@ export function GeographicSelect() {
     const fetchProvinces = async (regionCode: string) => {
         setLoading((prev) => ({ ...prev, provinces: true }));
         try {
-            const res = await fetch(`${API_URL}/api/regions/${regionCode}/provinces`);
+            const res = await fetch(`${API_URL}/regions/${regionCode}/provinces`);
             const data = await res.json();
-            setProvinces(data);
+            if (Array.isArray(data)) {
+                setProvinces(data);
+            } else {
+                setProvinces([]);
+            }
         } catch (error) {
             console.error("Failed to fetch provinces:", error);
         } finally {
@@ -65,10 +73,14 @@ export function GeographicSelect() {
     const fetchCities = async (provinceCode: string) => {
         setLoading((prev) => ({ ...prev, cities: true }));
         try {
-            const res = await fetch(`${API_URL}/api/provinces/${provinceCode}/cities`);
+            const res = await fetch(`${API_URL}/provinces/${provinceCode}/cities`);
             const data = await res.json();
-            const sortedCities = data.sort((a: any, b: any) => a.name.localeCompare(b.name));
-            setCities(sortedCities);
+            if (Array.isArray(data)) {
+                const sortedCities = data.sort((a: any, b: any) => a.name.localeCompare(b.name));
+                setCities(sortedCities);
+            } else {
+                setCities([]);
+            }
         } catch (error) {
             console.error("Failed to fetch cities:", error);
         } finally {
@@ -79,9 +91,13 @@ export function GeographicSelect() {
     const fetchBarangays = async (cityCode: string) => {
         setLoading((prev) => ({ ...prev, barangays: true }));
         try {
-            const res = await fetch(`${API_URL}/api/cities/${cityCode}/barangays`);
+            const res = await fetch(`${API_URL}/cities/${cityCode}/barangays`);
             const data = await res.json();
-            setBarangays(data);
+            if (Array.isArray(data)) {
+                setBarangays(data);
+            } else {
+                setBarangays([]);
+            }
         } catch (error) {
             console.error("Failed to fetch barangays:", error);
         } finally {
@@ -102,15 +118,20 @@ export function GeographicSelect() {
         if (code) {
             setLoading((prev) => ({ ...prev, provinces: true }));
             try {
-                const res = await fetch(`${API_URL}/api/regions/${code}/provinces`);
+                const res = await fetch(`${API_URL}/regions/${code}/provinces`);
                 const data = await res.json();
 
-                // Sort for better UX
-                const sortedProvinces = data.sort((a: any, b: any) => a.name.localeCompare(b.name));
-                setProvinces(sortedProvinces);
+                if (Array.isArray(data)) {
+                    // Sort for better UX
+                    const sortedProvinces = data.sort((a: any, b: any) => a.name.localeCompare(b.name));
+                    setProvinces(sortedProvinces);
 
-                // If region has no provinces (like NCR), fetch cities directly
-                if (data.length === 0) {
+                    // If region has no provinces (like NCR), fetch cities directly
+                    if (data.length === 0) {
+                        await fetchCitiesByRegion(code);
+                    }
+                } else {
+                    setProvinces([]);
                     await fetchCitiesByRegion(code);
                 }
             } catch (error) {
@@ -124,10 +145,14 @@ export function GeographicSelect() {
     const fetchCitiesByRegion = async (regionCode: string) => {
         setLoading((prev) => ({ ...prev, cities: true }));
         try {
-            const res = await fetch(`${API_URL}/api/regions/${regionCode}/cities`);
+            const res = await fetch(`${API_URL}/regions/${regionCode}/cities`);
             const data = await res.json();
-            const sortedCities = data.sort((a: any, b: any) => a.name.localeCompare(b.name));
-            setCities(sortedCities);
+            if (Array.isArray(data)) {
+                const sortedCities = data.sort((a: any, b: any) => a.name.localeCompare(b.name));
+                setCities(sortedCities);
+            } else {
+                setCities([]);
+            }
         } catch (error) {
             console.error("Failed to fetch cities by region:", error);
         } finally {

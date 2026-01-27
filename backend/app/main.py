@@ -21,7 +21,10 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Open PH Geographic Data Platform",
     version="2.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+    openapi_url="/api/openapi.json"
 )
 
 origins = os.getenv("ALLOWED_ORIGINS", "*").split(",")

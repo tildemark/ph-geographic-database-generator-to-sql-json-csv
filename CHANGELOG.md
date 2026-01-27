@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-01-27
+
+### Added
+- **XML Support:** Replaced HTML data dumps with XML format for better interoperability.
+- **Complete Dataset:** New "All" category allowing download of the entire database in a single file (JSON, CSV, SQL, XML).
+- **Search:** "Search by Code" functionality on the landing page to quickly find location details by 10-digit PSGC code.
+- **Documentation:** Added `docs/guide/TECHNICAL_REFERENCE.md` detailing HUC mapping and ingestion logic.
+
+### Fixed
+- **Generation:** Resolved issue where aggregated static files (`all.*`) were not being generated.
+- **Compatibility:** Fixed Python 3.11 syntax error related to f-string backslashes in SQL generation.
+
 ## [2.0.0] - 2026-01-26
 
 ### 🚀 Major Overhaul

@@ -1,0 +1,92 @@
+[
+  {
+    "code": "1300000000",
+    "name": "National Capital Region (NCR)",
+    "id": 1
+  },
+  {
+    "code": "1400000000",
+    "name": "Cordillera Administrative Region (CAR)",
+    "id": 2
+  },
+  {
+    "code": "0100000000",
+    "name": "Region I (Ilocos Region)",
+    "id": 3
+  },
+  {
+    "code": "0200000000",
+    "name": "Region II (Cagayan Valley)",
+    "id": 4
+  },
+  {
+    "code": "0300000000",
+    "name": "Region III (Central Luzon)",
+    "id": 5
+  },
+  {
+    "code": "0400000000",
+    "name": "Region IV-A (CALABARZON)",
+    "id": 6
+  },
+  {
+    "code": "1700000000",
+    "name": "MIMAROPA Region",
+    "id": 7
+  },
+  {
+    "code": "0500000000",
+    "name": "Region V (Bicol Region)",
+    "id": 8
+  },
+  {
+    "code": "0600000000",
+    "name": "Region VI (Western Visayas)",
+    "id": 9
+  },
+  {
+    "code": "1800000000",
+    "name": "Negros Island Region (NIR)",
+    "id": 10
+  },
+  {
+    "code": "0700000000",
+    "name": "Region VII (Central Visayas)",
+    "id": 11
+  },
+  {
+    "code": "0800000000",
+    "name": "Region VIII (Eastern Visayas)",
+    "id": 12
+  },
+  {
+    "code": "0900000000",
+    "name": "Region IX (Zamboanga Peninsula)",
+    "id": 13
+  },
+  {
+    "code": "1000000000",
+    "name": "Region X (Northern Mindanao)",
+    "id": 14
+  },
+  {
+    "code": "1100000000",
+    "name": "Region XI (Davao Region)",
+    "id": 15
+  },
+  {
+    "code": "1200000000",
+    "name": "Region XII (SOCCSKSARGEN)",
+    "id": 16
+  },
+  {
+    "code": "1600000000",
+    "name": "Region XIII (Caraga)",
+    "id": 17
+  },
+  {
+    "code": "1900000000",
+    "name": "Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)",
+    "id": 18
+  }
+]

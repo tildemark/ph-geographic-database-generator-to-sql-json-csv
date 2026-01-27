@@ -1,6 +1,6 @@
-# Open PH Geographic Data Platform (v2.0.0)
+# Open PH Geographic Data Platform (v2.1.0)
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-2.1.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 
@@ -12,10 +12,10 @@
 
 The **Open PH Geographic Data Platform** provides a reliable, high-performance way to access Philippine geographic data (Regions, Provinces, Cities, Municipalities, Barangays).
 
-Unlike the previous version which relied on fragile web scraping, v2.0.0 uses a **verified ingestion workflow** where official PSGC Excel files are uploaded via a secure Admin Dashboard. This data is then served via:
+Unlike the previous version which relied on fragile web scraping, v2.0.0+ uses a **verified ingestion workflow** where official PSGC Excel files are uploaded via a secure Admin Dashboard. This data is then served via:
 
 1.  **Public API:** A high-speed, cached REST API (FastAPI + Redis) for real-time application usage.
-2.  **Static Dumps:** Automatically generated `.sql`, `.json`, and `.csv` files for offline use.
+2.  **Static Dumps:** Automatically generated `.sql`, `.json`, `.xml`, and `.csv` files for offline use.
 
 **Live Demo:** [https://barangays.sanchez.ph](https://barangays.sanchez.ph)
 
@@ -33,7 +33,7 @@ Built for performance and reliability on OCI Ampere (ARM64) infrastructure.
 
 * **✅ Live Public API:** Query geographic data with sub-millisecond latency.
 * **✅ Verified Data Ingest:** Admin interface to upload official PSGC Excel files, preventing "broken crawler" issues.
-* **✅ Auto-Generation:** Instantly generates static SQL/JSON/CSV dumps upon data update.
+* **✅ Auto-Generation:** Instantly generates static SQL/JSON/CSV/XML dumps upon data update.
 * **✅ Rate Limiting:** Built-in protection against abuse (via Redis).
 * **✅ Interactive Docs:** Full Swagger UI (`/docs`) and Redoc (`/redoc`) support.
 * **✅ Dockerized:** One-command deployment for any server.

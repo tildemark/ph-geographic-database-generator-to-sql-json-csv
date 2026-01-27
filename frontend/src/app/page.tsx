@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, CheckCircle2, Database, Download, FileJson, FileType, Server } from "lucide-react";
+import { DataDumpSelector } from "@/components/DataDumpSelector";
 
 export default function Home() {
   const [apiStatus, setApiStatus] = useState<string>("Checking...");
@@ -12,7 +13,7 @@ export default function Home() {
   useEffect(() => {
     const checkApi = async () => {
       try {
-        const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/");
+        const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/regions");
         if (res.ok) {
           setApiStatus("Online");
         } else {
@@ -87,22 +88,10 @@ export default function Home() {
               <CardTitle className="flex items-center gap-2">
                 <Database className="h-5 w-5" /> Data Dumps
               </CardTitle>
-              <CardDescription>Static files generated daily from PSA data</CardDescription>
+              <CardDescription>Static files generated automatically from PSGC data</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <Button variant="outline" className="w-full justify-start gap-3" asChild>
-                <a href="/downloads/regions.json" download>
-                  <FileJson className="h-4 w-4" /> Regions (JSON)
-                </a>
-              </Button>
-              <Button variant="outline" className="w-full justify-start gap-3" asChild>
-                <a href="/downloads/provinces.csv" download>
-                  <FileType className="h-4 w-4" /> Provinces (CSV)
-                </a>
-              </Button>
-              <Button variant="ghost" className="w-full justify-start text-muted-foreground" disabled>
-                <Download className="h-4 w-4 mr-2" /> More available in Admin
-              </Button>
+            <CardContent>
+              <DataDumpSelector />
             </CardContent>
           </Card>
 

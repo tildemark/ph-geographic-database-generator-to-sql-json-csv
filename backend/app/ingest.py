@@ -156,9 +156,11 @@ async def process_psgc_file(file_path: str):
     # Try to extract version from filename
     filename = os.path.basename(file_path).upper()
     import re
-    version_match = re.search(r'([1-4]Q\s*\d{4})', filename)
+    # Flexible regex to catch 4Q 2025, 4Q-2025, 4Q_2025, etc.
+    version_pattern = r'([1-4][Qq][\s\-_]*\d{4})'
+    version_match = re.search(version_pattern, filename)
     if version_match:
-        psgc_version = version_match.group(1)
+        psgc_version = version_match.group(1).replace('-', ' ').replace('_', ' ').upper()
         logger.info(f"Extracted PSGC version from filename: {psgc_version}")
 
     try:
@@ -169,9 +171,9 @@ async def process_psgc_file(file_path: str):
         header_df = pd.read_excel(xls, sheet_name=sheet_name, nrows=10, header=None, dtype=str)
         for val in header_df.values.flatten():
             if pd.notnull(val):
-                vm = re.search(r'([1-4][Qq]\s*\d{4})', str(val))
+                vm = re.search(version_pattern, str(val))
                 if vm:
-                    psgc_version = vm.group(1).upper()
+                    psgc_version = vm.group(1).replace('-', ' ').replace('_', ' ').upper()
                     logger.info(f"Extracted PSGC version from sheet content: {psgc_version}")
                     break
 

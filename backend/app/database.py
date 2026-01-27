@@ -18,11 +18,13 @@ if not DATABASE_URL:
     
     encoded_user = quote_plus(POSTGRES_USER)
     encoded_password = quote_plus(POSTGRES_PASSWORD)
+    
+    # DEBUG: Print what we are using
+    print(f"DEBUG: App connecting to Host={POSTGRES_HOST} User={POSTGRES_USER} DB={POSTGRES_DB}")
+    print(f"DEBUG: Password Length={len(POSTGRES_PASSWORD)}")
+    
     DATABASE_URL = f"postgresql+asyncpg://{encoded_user}:{encoded_password}@{POSTGRES_HOST}:5432/{POSTGRES_DB}"
-else:
-    # Ensure usage of asyncpg driver
-    if "postgresql://" in DATABASE_URL:
-        DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
+    print(f"DEBUG: Final URL starts with: {DATABASE_URL.split(':')[0]}...")
 
 engine = create_async_engine(DATABASE_URL, echo=False, future=True)
 

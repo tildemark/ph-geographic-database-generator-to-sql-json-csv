@@ -55,6 +55,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secure_password_here}
       POSTGRES_DB: ${POSTGRES_DB:-ph_geo_db}
+      POSTGRES_HOST: ph_geo_db
       REDIS_URL: redis://redis:6379
       ADMIN_SECRET: ${ADMIN_SECRET:-change_this_secret_locally}
       # Important: Allow the proxy domain

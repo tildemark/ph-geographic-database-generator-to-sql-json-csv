@@ -62,8 +62,8 @@ services:
     networks:
       - geo_net # To talk to DB
       - net     # To talk to Nginx Proxy Manager
-    ports:
-      - "8000:8000"
+    # ports:
+    #   - "8000:8000"  <-- Removed for Production (Use Proxy)
 
   # -------------------------------------------------------------------------
   # Frontend: Next.js
@@ -81,8 +81,8 @@ services:
       NEXT_PUBLIC_API_URL: https://barangays.sanchez.ph/api
       # Server-side URL (Internal Docker DNS)
       INTERNAL_API_URL: http://backend:8000
-    ports:
-      - "3000:3000" # For local testing; NPM will handle production
+    # ports:
+    #   - "3000:3000"  <-- Removed for Production (Use Proxy)
     volumes:
       - static_exports:/app/public/downloads
     networks:

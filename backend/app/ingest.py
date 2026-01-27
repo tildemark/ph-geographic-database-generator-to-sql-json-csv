@@ -15,28 +15,51 @@ logger = logging.getLogger(__name__)
 
 STATIC_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static_exports")
 
-# Manual mapping for Independent Cities to their Geographic Provinces
+# Manual mapping for Independent Cities (HUCs/ICCs) to their Geographic Provinces
+# This uses the 10-digit PSGC standard (XX XXX XX XXX)
 GEOGRAPHIC_PROVINCE_MAP = {
-    # NCR (Manila as "province" for context, though technically independent)
-    "1300000000": "1300000000",
-    # Cotabato City -> Maguindanao (BARMM)
-    "1988040000": "1940000000", 
-    # Isabela City -> Basilan
-    "0997010000": "1507000000",
+    # Region I
+    "0132300000": "0105500000", # Dagupan City -> Pangasinan
+    # Region II
+    "0232200000": "0203100000", # Santiago City -> Isabela
+    # Region III
+    "0330100000": "0305400000", # Angeles City -> Pampanga
+    "0331400000": "0307100000", # Olongapo City -> Zambales
+    # Region IV-A
+    "0431200000": "0405600000", # Lucena City -> Quezon
+    # Region IV-B
+    "1731500000": "1705300000", # Puerto Princesa City -> Palawan
+    # Region V
+    "0532100000": "0501700000", # Naga City -> Camarines Sur
+    # Region VI
+    "0630200000": "0604500000", # Bacolod City -> Negros Occidental
+    "0631000000": "0603000000", # Iloilo City -> Iloilo
+    # Region VII
+    "0730600000": "0702200000", # Cebu City -> Cebu
+    "0731100000": "0702200000", # Lapu-Lapu City -> Cebu
+    "0731300000": "0702200000", # Mandaue City -> Cebu
+    # Region VIII
+    "0831600000": "0803700000", # Tacloban City -> Leyte
+    "0831900000": "0803700000", # Ormoc City -> Leyte
     # Region IX
-    "0973320000": "0973000000", # Zamboanga City -> Zamboanga del Sur
+    "0931700000": "0907300000", # Zamboanga City -> Zamboanga del Sur
+    "0932000000": "1500700000", # Isabela City -> Basilan
     # Region X
-    "1043050000": "1043000000", # Cagayan de Oro -> Misamis Oriental
-    "1035040000": "1035000000", # Iligan City -> Lanao del Norte
+    "1030500000": "1004300000", # Cagayan de Oro -> Misamis Oriental
+    "1030900000": "1003500000", # Iligan City -> Lanao del Norte
     # Region XI
-    "1124020000": "1124000000", # Davao City -> Davao del Sur
     "1130700000": "1102400000", # Davao City -> Davao del Sur
     # Region XII
     "1230800000": "1206300000", # General Santos -> South Cotabato
-    # Region XIII (Caraga)
+    # BARMM / Region XII
+    "1931800000": "1909800000", # Cotabato City -> Maguindanao
+    # Region XIII
     "1630400000": "1600200000", # Butuan City -> Agusan del Norte
     # CAR
     "1430300000": "1401100000", # Baguio -> Benguet
+    # Legacy fallbacks (handling different possible code formats)
+    "1043050000": "1043000000",
+    "0722170000": "0722000000",
 }
 
 async def upsert_model(session, model_class, code, data):
@@ -143,6 +166,28 @@ async def process_psgc_file(file_path: str):
         if pd.isna(x): return None
         s = str(x).split('.')[0].strip()
         if not s.isdigit(): return None
+        
+        # 10-digit PSGC 2.0 is the standard
+        if len(s) == 10:
+            return s
+        
+        # 9-digit codes are ambiguous:
+        # Case A: Region 1-9 missing leading zero (e.g., 101010000 -> 0101010000)
+        # Case B: Old 9-digit PSGC format (Region 10-19)
+        if len(s) == 9:
+            # If it starts with '1', it could be '01' (Region 1 stripped) 
+            # or '10'-'19' (Old format).
+            # PSGC 2.0 (10 digits) uses 3 digits for province.
+            # Old PSGC (9 digits) uses 2 digits for province.
+            # We assume PSGC 2.0 (10 digits) is the target.
+            
+            # Most modern files are PSGC 2.0 stripped by Excel.
+            # However, if it starts with 10-19, it's very likely the old format.
+            # But wait, stripped Region 1 is '100...'.
+            # The most reliable way is to check the first digit.
+            # If s[0] is '1'-'9', and it's 9 digits, it's missing the '0'.
+            return s.zfill(10)
+            
         return s.zfill(10)
 
     # Filter rows that look like data
@@ -177,6 +222,10 @@ async def process_psgc_file(file_path: str):
         logger.info(f"Syncing {len(provinces)} provinces...")
         for r in provinces:
             code = f"{r['code'][:5]}{'0'*5}"
+            # Skip cities that are listed as provinces in PSGC but we want to map geographically
+            if code in GEOGRAPHIC_PROVINCE_MAP:
+                logger.info(f"Skipping independent city province entry: {r['name']}")
+                continue
             region_code = f"{r['code'][:2]}{'0'*8}"
             await upsert_model(session, Province, code, {'name': r['name'], 'region_code': region_code})
         await session.commit()

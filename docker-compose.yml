@@ -72,6 +72,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://barangays.sanchez.ph/api}
     container_name: ph_geo_web
     restart: always
     depends_on:

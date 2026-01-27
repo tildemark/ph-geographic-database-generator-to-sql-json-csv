@@ -37,7 +37,7 @@ export function GeographicSelect() {
     }, []);
 
     const fetchRegions = async () => {
-        setLoading((prev) => ({ ...prev, regions: true }));
+        setLoading((prev: any) => ({ ...prev, regions: true }));
         try {
             const res = await fetch(`${API_URL}/regions`);
             const data = await res.json();
@@ -49,12 +49,12 @@ export function GeographicSelect() {
         } catch (error) {
             console.error("Failed to fetch regions:", error);
         } finally {
-            setLoading((prev) => ({ ...prev, regions: false }));
+            setLoading((prev: any) => ({ ...prev, regions: false }));
         }
     };
 
     const fetchProvinces = async (regionCode: string) => {
-        setLoading((prev) => ({ ...prev, provinces: true }));
+        setLoading((prev: any) => ({ ...prev, provinces: true }));
         try {
             const res = await fetch(`${API_URL}/regions/${regionCode}/provinces`);
             const data = await res.json();
@@ -66,12 +66,12 @@ export function GeographicSelect() {
         } catch (error) {
             console.error("Failed to fetch provinces:", error);
         } finally {
-            setLoading((prev) => ({ ...prev, provinces: false }));
+            setLoading((prev: any) => ({ ...prev, provinces: false }));
         }
     };
 
     const fetchCities = async (provinceCode: string) => {
-        setLoading((prev) => ({ ...prev, cities: true }));
+        setLoading((prev: any) => ({ ...prev, cities: true }));
         try {
             const res = await fetch(`${API_URL}/provinces/${provinceCode}/cities`);
             const data = await res.json();
@@ -84,12 +84,12 @@ export function GeographicSelect() {
         } catch (error) {
             console.error("Failed to fetch cities:", error);
         } finally {
-            setLoading((prev) => ({ ...prev, cities: false }));
+            setLoading((prev: any) => ({ ...prev, cities: false }));
         }
     };
 
     const fetchBarangays = async (cityCode: string) => {
-        setLoading((prev) => ({ ...prev, barangays: true }));
+        setLoading((prev: any) => ({ ...prev, barangays: true }));
         try {
             const res = await fetch(`${API_URL}/cities/${cityCode}/barangays`);
             const data = await res.json();
@@ -101,7 +101,7 @@ export function GeographicSelect() {
         } catch (error) {
             console.error("Failed to fetch barangays:", error);
         } finally {
-            setLoading((prev) => ({ ...prev, barangays: false }));
+            setLoading((prev: any) => ({ ...prev, barangays: false }));
         }
     };
 
@@ -116,7 +116,7 @@ export function GeographicSelect() {
         setBarangays([]);
 
         if (code) {
-            setLoading((prev) => ({ ...prev, provinces: true }));
+            setLoading((prev: any) => ({ ...prev, provinces: true }));
             try {
                 const res = await fetch(`${API_URL}/regions/${code}/provinces`);
                 const data = await res.json();
@@ -137,13 +137,13 @@ export function GeographicSelect() {
             } catch (error) {
                 console.error("Failed to fetch provinces:", error);
             } finally {
-                setLoading((prev) => ({ ...prev, provinces: false }));
+                setLoading((prev: any) => ({ ...prev, provinces: false }));
             }
         }
     };
 
     const fetchCitiesByRegion = async (regionCode: string) => {
-        setLoading((prev) => ({ ...prev, cities: true }));
+        setLoading((prev: any) => ({ ...prev, cities: true }));
         try {
             const res = await fetch(`${API_URL}/regions/${regionCode}/cities`);
             const data = await res.json();
@@ -156,7 +156,7 @@ export function GeographicSelect() {
         } catch (error) {
             console.error("Failed to fetch cities by region:", error);
         } finally {
-            setLoading((prev) => ({ ...prev, cities: false }));
+            setLoading((prev: any) => ({ ...prev, cities: false }));
         }
     };
 

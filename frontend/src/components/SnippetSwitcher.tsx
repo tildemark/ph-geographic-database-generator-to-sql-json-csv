@@ -14,6 +14,8 @@ interface Snippet {
 }
 
 export function SnippetSwitcher() {
+    const [activeTab, setActiveTab] = useState("curl");
+    const [copied, setCopied] = useState(false);
     const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
     const snippets: Snippet[] = [

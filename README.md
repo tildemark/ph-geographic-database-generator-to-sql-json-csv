@@ -1,6 +1,6 @@
-# Open PH Geographic Data Platform (v2.1.0)
+# Open PH Geographic Data Platform (v2.2.0)
 
-![Version](https://img.shields.io/badge/version-2.1.0-blue.svg)
+![Version](https://img.shields.io/badge/version-2.2.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 
@@ -45,9 +45,8 @@ Built for performance and reliability on OCI Ampere (ARM64) infrastructure.
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/tildemark/ph-geographic-database-generator-to-sql-json-csv.git](https://github.com/tildemark/ph-geographic-database-generator-to-sql-json-csv.git)
+git clone https://github.com/tildemark/ph-geographic-database-generator-to-sql-json-csv.git
 cd ph-geographic-database-generator-to-sql-json-csv
-
 ```
 
 ### 2. Configure Environment
@@ -64,21 +63,46 @@ POSTGRES_DB=ph_geo_db
 ADMIN_SECRET=your_secret_upload_key
 
 # Domain Configuration
-NEXT_PUBLIC_API_URL=http://localhost:8000
-ALLOWED_ORIGINS=http://localhost:3000
-
+NEXT_PUBLIC_API_URL=https://yourdomain.com/api
+ALLOWED_ORIGINS=https://yourdomain.com
 ```
 
 ### 3. Run with Docker
 
 ```bash
 docker-compose up --build -d
-
 ```
 
 * **Frontend:** Accessible at `http://localhost:3000`
 * **API:** Accessible at `http://localhost:8000`
 * **API Docs:** Accessible at `http://localhost:8000/docs`
+
+## 🛠 Troubleshooting
+
+### 1. "Invalid Password" Error during Startup
+If the backend fails with `InvalidPasswordError`:
+- **Stale Volumes**: If you changed the password in `.env` but the DB still reports an old password, Docker might be reusing a "zombie" volume. 
+- **Resolution**: Reset the database volume (Note: This deletes data).
+  ```bash
+  docker compose down -v
+  docker compose up -d
+  ```
+
+### 2. 502 Bad Gateway / Connection Failures
+- **Network Collisions**: If your server runs multiple Docker stacks, a container named `db` or `redis` might resolve to the wrong stack. 
+- **Resolution**: Use unique hostnames in `docker-compose.yml`. We have defaulted to `ph_geo_db` and `ph_geo_redis` to prevent this.
+
+### 3. Missing Cities (e.g., Cebu City, CDO)
+- Major cities (Highly Urbanized Cities) are often administratively independent from provinces.
+- **Resolution**: Re-upload the PSGC Excel file via the `/admin` panel. The ingestion script has updated logic to map these cities to their geographic provinces for easier navigation.
+
+### 4. Upload "Network Error" (via Nginx)
+- Large Excel files might exceed the default Nginx upload limit.
+- **Resolution**: Update your Nginx Proxy Manager / Nginx config:
+  ```nginx
+  client_max_body_size 50M;
+  proxy_read_timeout 300s;
+  ```
 
 ## 📖 API Usage
 
@@ -95,23 +119,17 @@ The API is free to use but rate-limited to ensure availability.
 | `GET` | `/provinces/{code}/cities` | Get all cities/municipalities in a province |
 | `GET` | `/cities/{code}/barangays` | Get all barangays in a city/municipality |
 
-*For full parameter details, visit the [Swagger Documentation](https://www.google.com/search?q=https://barangays.sanchez.ph/docs).*
+*For full parameter details, visit the [Swagger Documentation](https://barangays.sanchez.ph/api/docs).*
 
 ## 🔐 Admin Guide (Data Updates)
 
 To update the dataset when PSA releases a new PSGC file:
 
-1. Download the latest **PSGC Publication (Excel)** from the [PSA Website](https://www.google.com/search?q=https://psa.gov.ph/classification/psgc).
+1. Download the latest **PSGC Publication (Excel)** from the [PSA Website](https://psa.gov.ph/classification/psgc).
 2. Navigate to `/admin` on your deployment.
 3. Enter your `ADMIN_SECRET`.
 4. Upload the `.xlsx` file.
-5. **Wait:** The system will upsert the database, flush the Redis cache, and regenerate the static download files automatically.
-
-## 🗺 Roadmap
-
-* [ ] Add GeoJSON boundary data (polygons) for provinces.
-* [ ] Add population data overlay (if available).
-* [ ] GraphQL endpoint support.
+5. **Wait:** The system will sync the database and regenerate all static download files.
 
 ## 🤝 Contributing
 
@@ -119,5 +137,5 @@ Contributions are welcome! Please ensure you use `docker-compose` for developmen
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](https://www.google.com/search?q=LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 

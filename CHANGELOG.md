@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-01-27
+
+### Added
+- **Production URL Snippets**: The Documentation Guide now dynamically displays live API URLs based on environment configuration instead of hardcoded `localhost`.
+- **HUC Geo-Grouping**: Major cities like Cebu City, Cagayan de Oro City, and Davao City are now correctly grouped under their geographic provinces in the dropdown interfaces.
+
+### Fixed
+- **HUC Data Visibility**: Fixed a logic error in `ingest.py` where Highly Urbanized Cities (independent cities) were missing from the provincial lists.
+- **Data Integrity**: Refined `clean_code` logic to prevent Region 10+ data from being incorrectly assigned to Region 1 when Excel strips leading zeros.
+- **Frontend Crash**: Resolved a fatal JavaScript error on the `/docs-guide` page caused by a double `/api` prefix and missing defensive checks on API responses.
+- **Deployment Connectivity**: Resolved `InvalidPasswordError` by implementing automatic URL-encoding for database credentials.
+- **Network Collisions**: Standardized on unique hostnames (`ph_geo_db`, `ph_geo_redis`) to prevent 502 errors caused by container name collisions in shared environments.
+- **Health Check Path**: Moved the health endpoint to `/api/health` to align with Nginx proxy forwarding rules.
+
 ## [2.1.0] - 2026-01-27
 
 ### Added

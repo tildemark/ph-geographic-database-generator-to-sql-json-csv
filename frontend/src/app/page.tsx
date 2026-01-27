@@ -13,7 +13,7 @@ export default function Home() {
   useEffect(() => {
     const checkApi = async () => {
       try {
-        const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/regions");
+        const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/regions");
         if (res.ok) {
           setApiStatus("Online");
         } else {

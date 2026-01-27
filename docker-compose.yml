@@ -51,7 +51,7 @@ services:
       - db
       - redis
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-secure_password_here}@db:5432/${POSTGRES_DB:-ph_geo_db}
+      # DATABASE_URL constructed in app to handle encoding
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secure_password_here}
       POSTGRES_DB: ${POSTGRES_DB:-ph_geo_db}

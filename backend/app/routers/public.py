@@ -3,7 +3,7 @@ from sqlmodel import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 from app.database import get_session
-from app.models import Region, Province, City, Barangay
+from app.models import Region, Province, City, Barangay, Metadata
 from fastapi_limiter.depends import RateLimiter
 
 router = APIRouter()
@@ -45,3 +45,11 @@ async def get_barangays_by_city(code: str, session: AsyncSession = Depends(get_s
     code = code.zfill(10)
     result = await session.execute(select(Barangay).where(Barangay.city_code == code))
     return result.scalars().all()
+
+
+@router.get("/metadata", dependencies=[limit_dependency])
+async def get_metadata(session: AsyncSession = Depends(get_session)):
+    """Fetch system metadata (e.g., PSGC version)."""
+    result = await session.execute(select(Metadata))
+    metadata = result.scalars().all()
+    return {m.key: m.value for m in metadata}

@@ -5,10 +5,10 @@ import csv
 import json
 import logging
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlmodel import select
+from sqlmodel import select, delete
 from sqlalchemy.exc import IntegrityError
 from app.database import engine
-from app.models import Region, Province, District, City, Barangay
+from app.models import Region, Province, District, City, Barangay, Metadata
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -151,9 +151,30 @@ async def process_psgc_file(file_path: str):
     Parses the PSGC Excel file and upserts data into the database.
     """
     logger.info(f"Processing PSGC file: {file_path}")
+    psgc_version = "Unknown Version"
+    
+    # Try to extract version from filename
+    filename = os.path.basename(file_path).upper()
+    import re
+    version_match = re.search(r'([1-4]Q\s*\d{4})', filename)
+    if version_match:
+        psgc_version = version_match.group(1)
+        logger.info(f"Extracted PSGC version from filename: {psgc_version}")
+
     try:
         xls = pd.ExcelFile(file_path)
         sheet_name = 'PSGC' if 'PSGC' in xls.sheet_names else xls.sheet_names[0]
+        
+        # Peek at the top of the file to see if version is mentioned in headers
+        header_df = pd.read_excel(xls, sheet_name=sheet_name, nrows=10, header=None, dtype=str)
+        for val in header_df.values.flatten():
+            if pd.notnull(val):
+                vm = re.search(r'([1-4][Qq]\s*\d{4})', str(val))
+                if vm:
+                    psgc_version = vm.group(1).upper()
+                    logger.info(f"Extracted PSGC version from sheet content: {psgc_version}")
+                    break
+
         # Load without headers to manually control indexing
         df = pd.read_excel(xls, sheet_name=sheet_name, header=None, dtype=str)
         logger.info(f"Loaded sheet: {sheet_name} with {len(df)} rows")
@@ -298,6 +319,12 @@ async def process_psgc_file(file_path: str):
                 'region_code': region_code
             })
         await session.commit()
+
+        # Update Metadata
+        await session.execute(delete(Metadata).where(Metadata.key == "psgc_version"))
+        session.add(Metadata(key="psgc_version", value=psgc_version))
+        await session.commit()
+        logger.info(f"Updated metadata: psgc_version = {psgc_version}")
     
     logger.info("Ingestion complete. Generating static files...")
     await generate_static_files()

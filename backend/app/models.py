@@ -55,3 +55,8 @@ class Barangay(PsGcBase, table=True):
     region_code: Optional[str] = Field(default=None, index=True)
     
     city: Optional[City] = Relationship(back_populates="barangays")
+
+class Metadata(SQLModel, table=True):
+    __tablename__ = "metadata"
+    key: str = Field(primary_key=True)
+    value: str
